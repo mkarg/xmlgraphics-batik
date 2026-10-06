@@ -29,13 +29,12 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -299,17 +298,16 @@ public class Main extends JComponent {
     }
 
     public static void readFileList(String file, List fileVec) {
-        BufferedReader br;
+        List<String> lines;
         try {
-            br = new BufferedReader(new FileReader(file));
-        } catch(FileNotFoundException fnfe) {
+            lines = Files.readAllLines(Paths.get(file));
+        } catch(IOException ioe) {
             System.err.println("Unable to open file-list: " + file);
             return;
         }
         try {
             URL flURL = new File(file).toURI().toURL();
-            String line;
-            while ((line = br.readLine()) != null) {
+            for (String line : lines) {
                 String str = line;
                 int idx = str.indexOf('#');
                 if (idx != -1)
@@ -326,8 +324,6 @@ public class Main extends JComponent {
             }
         } catch (IOException ioe) {
             System.err.println("Error while reading file-list: " + file);
-        } finally {
-            try { br.close(); } catch (IOException ioe) { }
         }
     }
 

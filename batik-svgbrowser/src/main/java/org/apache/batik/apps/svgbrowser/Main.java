@@ -22,18 +22,17 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.Authenticator;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -481,16 +480,10 @@ public class Main implements Application {
             File policyFile = new File(batikConfigDir, SQUIGGLE_POLICY_FILE);
 
             // Copy original policy file into local policy file
-            Reader r = new BufferedReader(new InputStreamReader(policyURL.openStream()));
-            Writer w = new FileWriter(policyFile);
-
-            char[] buf = new char[1024];
-            int n = 0;
-            while ( (n=r.read(buf, 0, buf.length)) != -1 ) {
-                w.write(buf, 0, n);
-            }
-
-            r.close();
+            Files.copy(policyURL.openStream(), policyFile.toPath(),
+                       StandardCopyOption.REPLACE_EXISTING);
+            Writer w = Files.newBufferedWriter(policyFile.toPath(),
+                                               StandardOpenOption.APPEND);
 
             // Now, append additional grants depending on the security
             // settings
