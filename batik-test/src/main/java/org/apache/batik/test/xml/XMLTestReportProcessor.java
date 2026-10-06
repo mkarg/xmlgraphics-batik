@@ -19,12 +19,6 @@
 package org.apache.batik.test.xml;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +26,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import java.util.Calendar;
 
@@ -497,17 +493,7 @@ public class XMLTestReportProcessor
      * Utility method. Copies in to out
      */
     protected void copy(File in, File out) throws IOException {
-        InputStream is = new BufferedInputStream(new FileInputStream(in));
-        OutputStream os = new BufferedOutputStream(new FileOutputStream(out));
-
-        final byte[] b = new byte[1024];
-        int n = -1;
-        while( (n = is.read(b)) != -1 ){
-            os.write(b, 0, n);
-        }
-
-        is.close();
-        os.close();
+        Files.copy(in.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**
